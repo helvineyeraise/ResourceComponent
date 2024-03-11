@@ -1,0 +1,49 @@
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-family: 'segoe UI' !important;
+    font-size: 12px !important;
+    font-weight: normal;
+}
+
+th,
+td {
+    border: 1px solid #c7c1c1;
+    padding: 8px;
+    text-align: left;
+    font-weight: normal;
+}
+
+    th:nth-child(n+2):nth-child(-n+12) {
+        font-weight: normal;
+    }
+
+#submitBtn {
+    background-color: #4CAF50;
+    border: 2px solid #4CAF50;
+    color: white;
+    padding: 8px 16px;
+    text-align: center;
+    font-family: 'segoe UI' !important;
+    font-size: 14px !important;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    float: right;
+}
+
+/* CSS for the loading overlay */
+/* CSS for the loading overlay */
+#loadingOverlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
