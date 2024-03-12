@@ -31,7 +31,13 @@ td {
     border-radius: 4px;
     float: right;
 }
-
+#searchContainer{
+    display: flex;
+    align-items: self-start;
+}
+#searchInput{
+    width: 10%;
+}
 /* CSS for the loading overlay */
 /* CSS for the loading overlay */
 #loadingOverlay {
