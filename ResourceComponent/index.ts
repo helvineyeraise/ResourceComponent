@@ -112,13 +112,12 @@ export class ResourceComponent implements ComponentFramework.StandardControl<IIn
      * name
      */
     public async retrieveData() {
-        let arraydata=[];
+        //let arraydata=[];
         if (this._context.parameters.projectId.raw != null) {
             try {
                 const result = await this._context.webAPI.retrieveMultipleRecords("eye_resourcemanagement", `?$filter=_eye_resource_value ne null and _eye_project_value eq '${this._context.parameters.projectId.raw}'`);
                 if (result.entities.length > 0) {
-                    arraydata.push(this.groupBy(result.entities, "_eye_resource_value"));
-                    console.log(arraydata);
+                    const arraydata: any[] = (this.groupBy(result.entities, "_eye_resource_value"));
                     for (let i = 0; i < arraydata.length; i++) {
                         this.TableRow(arraydata[i]);
                     }
@@ -132,7 +131,6 @@ export class ResourceComponent implements ComponentFramework.StandardControl<IIn
 
 
     public TableRow(row: any[]) {
-        console.log(row);
         const startYear: number = this.startDate.getFullYear();
         const endYear: number = this.endDate.getFullYear();
         const startMonth: number = this.startDate.getMonth();
@@ -140,16 +138,47 @@ export class ResourceComponent implements ComponentFramework.StandardControl<IIn
         let monthcell: string = "";
         try {
             for (let year = startYear; year <= endYear; year++) {
-                const dataArray = row.find((data) => data.eye_year == year);
-                console.log(dataArray);
+                const dataArray = row.find((data) => data.eye_fy == year);
                 monthcell += `<td id="uuid" style="display:none">${dataArray.eye_resourcemanagementid}</td>`;
 
                 for (let month = (year === startYear ? startMonth : 0); month <= (year === endYear ? endMonth : 11); month++) {
                     const monthName: string = new Date(year, month, 1).toLocaleString("default", { month: "short" });
-                    if (monthName == "Jan" && year == dataArray.eye_year) {
+                    if (monthName == "Jan" && year == dataArray.eye_fy) {
                         monthcell += `<td contenteditable="true" id="${monthName}">${dataArray.eye_january != null ? dataArray.eye_january : 0}</td>`;
                     }
-                    // Other months follow the same pattern
+                    if (monthName == "Feb" && year == dataArray.eye_fy) {
+                        monthcell += `<td contenteditable="true" id="${monthName}">${dataArray.eye_february != null ? dataArray.eye_february : 0}</td>`;
+                    }
+                    if (monthName == "Mar" && year == dataArray.eye_fy) {
+                        monthcell += `<td contenteditable="true" id="${monthName}">${dataArray.eye_march != null ? dataArray.eye_march : 0}</td>`;
+                    }
+                    if (monthName == "Apr" && year == dataArray.eye_fy) {
+                        monthcell += `<td contenteditable="true" id="${monthName}">${dataArray.eye_april != null ? dataArray.eye_april : 0}</td>`;
+                    }
+                    if (monthName == "May" && year == dataArray.eye_fy) {
+                        monthcell += `<td contenteditable="true" id="${monthName}">${dataArray.eye_may != null ? dataArray.eye_may : 0}</td>`;
+                    }
+                    if (monthName == "Jun" && year == dataArray.eye_fy) {
+                        monthcell += `<td contenteditable="true" id="${monthName}">${dataArray.eye_june != null ? dataArray.eye_june : 0}</td>`;
+                    }
+                    if (monthName == "Jul" && year == dataArray.eye_fy) {
+                        monthcell += `<td contenteditable="true" id="${monthName}">${dataArray.eye_july != null ? dataArray.eye_july : 0}</td>`;
+                    }
+                    if (monthName == "Aug" && year == dataArray.eye_fy) {
+                        monthcell += `<td contenteditable="true" id="${monthName}">${dataArray.eye_august != null ? dataArray.eye_august : 0}</td>`;
+                    }
+                    if (monthName == "Sep" && year == dataArray.eye_fy) {
+                        monthcell += `<td contenteditable="true" id="${monthName}">${dataArray.eye_september != null ? dataArray.eye_september : 0}</td>`;
+                    }
+                    if (monthName == "Oct" && year == dataArray.eye_fy) {
+                        monthcell += `<td contenteditable="true" id="${monthName}">${dataArray.eye_october != null ? dataArray.eye_october : 0}</td>`;
+                    }
+                    if (monthName == "Nov" && year == dataArray.eye_fy) {
+                        monthcell += `<td contenteditable="true" id="${monthName}">${dataArray.eye_november != null ? dataArray.eye_november : 0}</td>`;
+                    }
+                    if (monthName == "Dec" && year == dataArray.eye_fy) {
+                        monthcell += `<td contenteditable="true" id="${monthName}">${dataArray.eye_december != null ? dataArray.eye_december : 0}</td>`;
+                    }
                 }
                 monthcell += `<td id="endRow" style="display:none"></td>`;
             }
@@ -202,25 +231,14 @@ export class ResourceComponent implements ComponentFramework.StandardControl<IIn
             document.getElementById("tbody")!.innerHTML += monthRow;
         }
     }
-    // public groupBy(array: any[], key: string) {
-    //     return Object.values(array.reduce((result: any, currentValue: any) => {
-    //         (result[currentValue[key]] = result[currentValue[key]] || []).push(currentValue);
-    //         return result;
-    //     }, {}));
-    // }
     public groupBy(data: any[], key: string) {
-        const groups: any[] = [];
+        const groups: any = {};
         data.forEach((item: any) => {
             const value = item[key];
-            const existingGroup = groups.find(group => group[key] === value);
-            if (existingGroup) {
-                existingGroup.items.push(item);
-            } else {
-                groups.push({ [key]: value, items: [item] });
-            }
+            groups[value] = groups[value] || [];
+            groups[value].push(item);
         });
-    
-        return groups;
+        return Object.values(groups);
     }
 
     public ReadHTMLTable() {
@@ -239,19 +257,18 @@ export class ResourceComponent implements ComponentFramework.StandardControl<IIn
         let dec: number = 0;
         const oTable: HTMLTableElement | null = document.getElementById('myTable') as HTMLTableElement;
         if (oTable) {
-            const rowLength: number = oTable.rows.length;
+            let rowLength: number = oTable.rows.length;
             if (rowLength > 3) {
                 for (let i = 0; i < rowLength; i++) {
-                    //const oCells: HTMLCollectionOf<HTMLTableDataCellElement> = oTable.rows.item(i).cells;
-                    const rowItem = oTable.rows.item(i);
+                    let rowItem = oTable.rows.item(i);
                     // eslint-disable-next-line no-undef
-                    const oCells: HTMLCollectionOf<HTMLTableCellElement> | null = rowItem ? rowItem.cells : null;
+                    let oCells: HTMLCollectionOf<HTMLTableCellElement> | null = rowItem ? rowItem.cells : null;
                     let cellLength: number = 0;
                     if (oCells) {
                         cellLength = oCells.length;
                         for (let j = 0; j < cellLength; j++) {
                             if (oCells[j].id == "endRow") {
-                                const resData = {
+                                let resData = {
                                     "eye_january": parseFloat(jan.toString()),
                                     "eye_february": parseFloat(feb.toString()),
                                     "eye_march": parseFloat(mar.toString()),
